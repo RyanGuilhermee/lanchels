@@ -6,7 +6,7 @@
   <header>
     <Navbar />
   </header>
-  
+
   <main>
     <div class="container-fluid">
       <h1>
@@ -102,6 +102,7 @@
 
   main #actions button {
     margin: 0px 10px 0px 10px;
+    font-size: 14px;
   }
 
   @media (max-width: 936px) {
