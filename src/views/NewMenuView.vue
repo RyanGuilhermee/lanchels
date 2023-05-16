@@ -80,6 +80,8 @@
 
       nameInput.value.value = '';
       priceInput.value.value = '';
+      nameInputValue.value = '';
+      digitValue.value = '';
     } catch (error) {
       console.log(error);
     }
