@@ -20,13 +20,13 @@
                 <router-link to="/" class="router">
                     <a class="nav-link" aria-current="page" href="#">Home</a>                   
                 </router-link>
-                <router-link to="/new-menu" class="router">
+                <router-link to="/menu" class="router">
                     <a class="nav-link" aria-current="page" href="#">Cardápio</a>
                 </router-link>
-                <router-link to="/new-order" class="router">
+                <router-link to="/order" class="router">
                     <a class="nav-link" aria-current="page" href="#">Pedidos pagos</a>
                 </router-link>
-                <router-link to="/new-order" class="router">
+                <router-link to="/order" class="router">
                     <a class="nav-link" aria-current="page" href="#">Pedidos em débito</a>
                 </router-link>
               </li>

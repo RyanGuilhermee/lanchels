@@ -52,10 +52,10 @@
 
       <section id="actions">
         <div class="d-flex justify-content-center mt-5">
-          <router-link to="/new-order">
+          <router-link to="/order">
             <button type="button" class="btn btn-warning shadow p-3 mb-4 bg-body-tertiary rounded">Novo pedido</button>
           </router-link>
-          <router-link to="/new-menu">
+          <router-link to="/menu">
             <button type="button" class="btn btn-warning shadow p-3 mb-4 bg-body-tertiary rounded">Novo cardápio</button>
           </router-link>
         </div>

@@ -12,12 +12,12 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/new-menu',
+      path: '/menu/:id?',
       name: 'menu',
       component: MenuView
     },
     {
-      path: '/new-order',
+      path: '/order/:id?',
       name: 'order',
       component: OrderView
     }
