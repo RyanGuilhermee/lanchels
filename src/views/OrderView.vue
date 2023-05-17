@@ -3,7 +3,7 @@
   import { useRoute } from 'vue-router';
   import Navbar from '../components/NavbarComponent.vue';
   import { getMenu, type Menu } from '@/services/menuService';
-  import { type Order } from '../services/orderService';
+  import { saveOrder, updateOrder, findOrder, type Order } from '../services/orderService';
 
   interface EventTargetChecked extends EventTarget {
     checked: boolean;
@@ -16,14 +16,17 @@
     customerName: '',
     snacks: [],
     totalValue: 0,
-    totalPayed: 0,
+    totalPaid: 0,
     totalDebt: 0,
     observations: ''
   });
+  let pageTitle = ref('Novo pedido');
+  let addButtonContent = ref('Adicionar');
 
   onMounted(async () => {
     menuData.value = await getMenu();
-    
+    const orderId = route.params.id as string;
+
     for (let i = 0; i < menuData.value.length; i++) {
       order.snacks[i] = {
         id: i,
@@ -35,6 +38,32 @@
         isPaid: false,
       }
     }
+
+    if (orderId) {
+      pageTitle.value = 'Editar pedido';
+      addButtonContent.value = 'Salvar';
+
+      const orderData = await findOrder(orderId) as Order;
+
+      order.customerName = orderData.customerName,
+      order.snacks = [],
+      order.totalValue = orderData.totalValue,
+      order.totalPaid = orderData.totalPaid,
+      order.totalDebt = orderData.totalDebt,
+      order.observations = orderData.observations
+
+      for (const i in orderData.snacks) {
+        order.snacks[i] = {
+          id: Number(i),
+          name: orderData.snacks[i].name,
+          price: orderData.snacks[i].price,
+          quantity: orderData.snacks[i].quantity,
+          quantityPaid: orderData.snacks[i].quantityPaid,
+          paymentMethod: orderData.snacks[i].paymentMethod,
+          isPaid: orderData.snacks[i].isPaid,
+        }
+      }
+    }
   });
 
   const addItem = (index: number) => {
@@ -43,7 +72,7 @@
 
     order.totalValue += order.snacks[index].price;
     
-    order.snacks[index].isPaid && (order.totalPayed += order.snacks[index].price);
+    order.snacks[index].isPaid && (order.totalPaid += order.snacks[index].price);
     !order.snacks[index].isPaid && (order.totalDebt += order.snacks[index].price);
   }
 
@@ -57,7 +86,7 @@
 
     order.totalValue -= order.snacks[index].price;
 
-    order.snacks[index].isPaid && (order.totalPayed -= order.snacks[index].price);
+    order.snacks[index].isPaid && (order.totalPaid -= order.snacks[index].price);
     !order.snacks[index].isPaid && (order.totalDebt -= order.snacks[index].price);
   }
 
@@ -65,20 +94,55 @@
     const eventTarget = event.target as EventTargetChecked;
 
     if (eventTarget.checked) {
-      order.totalPayed += ((order.snacks[index].quantity - order.snacks[index].quantityPaid) * order.snacks[index].price);
+      order.totalPaid += ((order.snacks[index].quantity - order.snacks[index].quantityPaid) * order.snacks[index].price);
       order.totalDebt -= ((order.snacks[index].quantity - order.snacks[index].quantityPaid) * order.snacks[index].price);
       order.snacks[index].quantityPaid = order.snacks[index].quantity;
 
       return;
     }
 
-    order.totalPayed -= (order.snacks[index].quantity * order.snacks[index].price);
+    order.totalPaid -= (order.snacks[index].quantity * order.snacks[index].price);
     order.totalDebt += (order.snacks[index].quantity * order.snacks[index].price);
     order.snacks[index].quantityPaid -= order.snacks[index].quantity;
   }
 
-  const handlerAddButton = () => {
-    console.log(order.snacks);
+  const cleanOrder = () => {
+    order.customerName = '',
+    order.snacks = [],
+    order.totalValue = 0,
+    order.totalPaid = 0,
+    order.totalDebt = 0,
+    order.observations = ''
+
+    for (let i = 0; i < menuData.value!.length; i++) {
+      order.snacks[i] = {
+        id: i,
+        name: '',
+        price: 0,
+        quantity: 0,
+        quantityPaid: 0,
+        paymentMethod: 'pix',
+        isPaid: false,
+      }
+    }
+  }
+
+  const handlerAddButton = async () => {
+    try {
+      const orderId = route.params.id as string;
+
+      if (orderId) {
+        await updateOrder(orderId, order);
+        alert('Pedido salvo com sucesso!');
+      } else {
+        await saveOrder(order);
+        alert('Pedido adicionado com sucesso!');
+        cleanOrder();
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 </script>
 
@@ -89,7 +153,7 @@
 
   <main>
     <div class="container">
-      <h1>Novo pedido</h1>
+      <h1>{{ pageTitle }}</h1>
 
       <form action="" class="mt-4">
         <div class="mb-3">
@@ -159,24 +223,25 @@
           <div class="card-footer text-body-secondary">
             <div class="orders-summary d-flex justify-content-between">
               <div class="orders-list" style="height: 120px; overflow-y: auto;">
-                <ul class="list-group list-group-flush" v-for="snack in order.snacks" :key="snack.id">
-                  <template v-if="snack.quantity">
-                    <li class="list-group-item">
-                      {{ snack.quantity }}x {{ snack.name }} <br>
-                      <span style="font-size: 13px; font-weight: 500;" v-if="!(snack.quantity === snack.quantityPaid)">
-                        {{ snack.quantity - snack.quantityPaid }} restante(s) não pago
-                      </span>
-                      <span style="font-size: 13px; font-weight: 500;" v-else-if="(snack.quantity === snack.quantityPaid)">
-                        Pago
-                      </span>
-                    </li>
+                <ul class="list-group list-group-flush">
+                  <template v-for="snack in order.snacks" :key="snack.id">
+                    <template v-if="snack.quantity">
+                      <li class="list-group-item">
+                        {{ snack.quantity }}x {{ snack.name }} <br>
+                        <span style="font-size: 13px; font-weight: 500;" v-if="!(snack.quantity === snack.quantityPaid)">
+                          {{ snack.quantity - snack.quantityPaid }} restante(s) não pago
+                        </span>
+                        <span class="d-flex align-items-center" style="font-size: 13px; font-weight: 500;" v-else-if="(snack.quantity === snack.quantityPaid)">
+                          <span class="material-symbols-outlined" style="color: #5F5F5F; font-size: 14px;">check</span>pago
+                        </span>
+                      </li>
+                    </template>
                   </template>
                 </ul>
               </div>
-              <!-- ['1x Caldo', '2x Torta de frango', '1x Cachorro-quente', '1x Pirulito'] -->
               <div class="amount-summary">
                 <p>Valor total: <span class="amount-value-total">{{ order.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'}) }}</span></p>
-                <p>Total pago: <span class="amount-value-payed">{{ order.totalPayed.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'}) }}</span></p>
+                <p>Total pago: <span class="amount-value-payed">{{ order.totalPaid.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'}) }}</span></p>
                 <p>Falta pagar: <span class="amount-value-debt">{{ order.totalDebt.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL'}) }}</span></p>
               </div>
             </div>
@@ -184,11 +249,11 @@
         </div>
 
         <div class="form-floating mt-3">
-          <textarea class="form-control" placeholder="Observações" id="observationArea" style="height: 100px"></textarea>
+          <textarea class="form-control" placeholder="Observações" id="observationArea" style="height: 100px" v-model="order.observations"></textarea>
           <label for="observationArea">Observações</label>
         </div>
 
-        <button type="button" class="btn btn-warning shadow p-2 mb-3 mt-3 bg-body-tertiary rounded" @click="handlerAddButton">Adicionar</button>
+        <button type="button" class="btn btn-warning shadow p-2 mb-3 mt-3 bg-body-tertiary rounded" @click="handlerAddButton">{{ addButtonContent }}</button>
       </form>
     </div>
   </main>
@@ -204,7 +269,7 @@
     text-align: center;
   }
 
-  main label, input, button, h3, li, p {
+  main label, input, button, h3, li, p, textarea {
     font-size: 14px;
   }
 

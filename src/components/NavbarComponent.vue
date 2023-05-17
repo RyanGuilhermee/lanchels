@@ -23,11 +23,11 @@
                 <router-link to="/menu" class="router">
                     <a class="nav-link" aria-current="page" href="#">Cardápio</a>
                 </router-link>
-                <router-link to="/order" class="router">
-                    <a class="nav-link" aria-current="page" href="#">Pedidos pagos</a>
+                <router-link to="/paid-orders" class="router">
+                    <a class="nav-link" aria-current="page" href="#">Lista de pedidos pagos</a>
                 </router-link>
-                <router-link to="/order" class="router">
-                    <a class="nav-link" aria-current="page" href="#">Pedidos em débito</a>
+                <router-link to="/unpaid-orders" class="router">
+                    <a class="nav-link" aria-current="page" href="#">Lista de pedidos em débito</a>
                 </router-link>
               </li>
             </ul>

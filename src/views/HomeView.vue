@@ -1,5 +1,36 @@
 <script setup lang="ts">
+  import { ref, onMounted } from 'vue';
   import Navbar from '../components/NavbarComponent.vue';
+  import { findAllOrders } from '../services/orderService';
+
+  let totalPix = ref(0);
+  let totalMoney = ref(0);
+  let totalAll = ref(0);
+
+   onMounted(async () => {
+      try {
+        const ordersData = await findAllOrders();
+
+        //filter all order paid
+        const allOrderPaid = ordersData.filter(order => order.totalPaid);
+
+        allOrderPaid.filter(order => {
+          for (const snack of order.snacks) {
+            if (snack.quantityPaid) {
+              if (snack.paymentMethod === 'pix') {
+                totalPix.value += (snack.quantityPaid * snack.price);
+              } else if (snack.paymentMethod === 'money') {
+                totalMoney.value += (snack.quantityPaid * snack.price);
+              } 
+
+              totalAll.value += (snack.quantityPaid * snack.price);
+            }
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+   });
 </script>
 
 <template>
@@ -24,7 +55,7 @@
               <div class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded" style="width: 18rem;">
                 <div class="card-body">
                   <h5 class="card-title">Pix</h5>
-                  <p class="card-text">R$ 250,00</p>
+                  <p class="card-text">{{ totalPix.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
                 </div>
               </div>
             </div>
@@ -33,7 +64,7 @@
               <div class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded" style="width: 18rem;">
                 <div class="card-body">
                   <h5 class="card-title">Dinheiro</h5>
-                  <p class="card-text">R$ 250,00</p>
+                  <p class="card-text">{{ totalMoney.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
                 </div>
               </div>
             </div>
@@ -42,7 +73,7 @@
               <div class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded" style="width: 18rem;">
                 <div class="card-body">
                   <h5 class="card-title">Total</h5>
-                  <p class="card-text">R$ 500,00</p>
+                  <p class="card-text">{{ totalAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
                 </div>
               </div>
             </div>
