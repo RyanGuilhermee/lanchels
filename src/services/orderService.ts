@@ -6,9 +6,9 @@ export type Order = {
     name: string;
     price: number;
     quantity: number;
-    quantityPayed: number;
+    quantityPaid: number;
     paymentMethod: string;
-    isPayed: boolean;
+    isPaid: boolean;
   }[];
   totalValue: number;
   totalPayed: number;

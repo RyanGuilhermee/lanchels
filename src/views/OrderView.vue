@@ -30,26 +30,26 @@
         name: '',
         price: 0,
         quantity: 0,
-        quantityPayed: 0,
+        quantityPaid: 0,
         paymentMethod: 'pix',
-        isPayed: false,
+        isPaid: false,
       }
     }
   });
 
   const addItem = (index: number) => {
-    order.snacks[index].isPayed = false;
+    order.snacks[index].isPaid = false;
     order.snacks[index].quantity++;
 
     order.totalValue += order.snacks[index].price;
     
-    order.snacks[index].isPayed && (order.totalPayed += order.snacks[index].price);
-    !order.snacks[index].isPayed && (order.totalDebt += order.snacks[index].price);
+    order.snacks[index].isPaid && (order.totalPayed += order.snacks[index].price);
+    !order.snacks[index].isPaid && (order.totalDebt += order.snacks[index].price);
   }
 
   const removeItem = (index: number) => {
     if (order.snacks[index].quantity === 0 ||
-    order.snacks[index].quantity === order.snacks[index].quantityPayed) {
+    order.snacks[index].quantity === order.snacks[index].quantityPaid) {
       return;
     }
 
@@ -57,24 +57,24 @@
 
     order.totalValue -= order.snacks[index].price;
 
-    order.snacks[index].isPayed && (order.totalPayed -= order.snacks[index].price);
-    !order.snacks[index].isPayed && (order.totalDebt -= order.snacks[index].price);
+    order.snacks[index].isPaid && (order.totalPayed -= order.snacks[index].price);
+    !order.snacks[index].isPaid && (order.totalDebt -= order.snacks[index].price);
   }
 
   const handlerPayCheckbox = (event: Event, index: number) => {
     const eventTarget = event.target as EventTargetChecked;
 
     if (eventTarget.checked) {
-      order.totalPayed += ((order.snacks[index].quantity - order.snacks[index].quantityPayed) * order.snacks[index].price);
-      order.totalDebt -= ((order.snacks[index].quantity - order.snacks[index].quantityPayed) * order.snacks[index].price);
-      order.snacks[index].quantityPayed = order.snacks[index].quantity;
+      order.totalPayed += ((order.snacks[index].quantity - order.snacks[index].quantityPaid) * order.snacks[index].price);
+      order.totalDebt -= ((order.snacks[index].quantity - order.snacks[index].quantityPaid) * order.snacks[index].price);
+      order.snacks[index].quantityPaid = order.snacks[index].quantity;
 
       return;
     }
 
     order.totalPayed -= (order.snacks[index].quantity * order.snacks[index].price);
     order.totalDebt += (order.snacks[index].quantity * order.snacks[index].price);
-    order.snacks[index].quantityPayed -= order.snacks[index].quantity;
+    order.snacks[index].quantityPaid -= order.snacks[index].quantity;
   }
 
   const handlerAddButton = () => {
@@ -146,7 +146,7 @@
                         <label class="form-check-label">
                           <input class="form-check-input" type="checkbox" 
                           @click="(event) => handlerPayCheckbox(event, index)" 
-                          v-model="order.snacks[index].isPayed" :disabled="!order.snacks[index].quantity">
+                          v-model="order.snacks[index].isPaid" :disabled="!order.snacks[index].quantity">
                           <span :style="order.snacks[index].quantity ? 'opacity: 100%;' : 'opacity: 45%;'">Pago</span>
                         </label>
                       </div>
@@ -163,10 +163,10 @@
                   <template v-if="snack.quantity">
                     <li class="list-group-item">
                       {{ snack.quantity }}x {{ snack.name }} <br>
-                      <span style="font-size: 13px; font-weight: 500;" v-if="!(snack.quantity === snack.quantityPayed)">
-                        {{ snack.quantity - snack.quantityPayed }} restante(s) não pago
+                      <span style="font-size: 13px; font-weight: 500;" v-if="!(snack.quantity === snack.quantityPaid)">
+                        {{ snack.quantity - snack.quantityPaid }} restante(s) não pago
                       </span>
-                      <span style="font-size: 13px; font-weight: 500;" v-else-if="(snack.quantity === snack.quantityPayed)">
+                      <span style="font-size: 13px; font-weight: 500;" v-else-if="(snack.quantity === snack.quantityPaid)">
                         Pago
                       </span>
                     </li>
