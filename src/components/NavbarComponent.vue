@@ -16,7 +16,7 @@
           </div>
           <div class="offcanvas-body">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-              <li class="nav-item">
+              <li class="nav-item" data-bs-dismiss="offcanvas">
                 <router-link to="/" class="router">
                     <a class="nav-link" aria-current="page" href="#">Home</a>                   
                 </router-link>
