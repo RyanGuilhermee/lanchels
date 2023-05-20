@@ -5,9 +5,10 @@
 
   interface EventTargetValue extends EventTarget {
     value: string;
+    setSelectionRange: (selectionStart: number, selectionEnd: number) => undefined;
+    focus: () => undefined;
   }
-
-  let currentKey = ref('');
+  
   let digitValue = ref('');
   let nameInputValue = ref('');
   let isHiddenInputName = ref(true);
@@ -22,32 +23,23 @@
     nameInput.value = targetValue;
   }
 
-  const restrictNonNumericKeys = (event: any) => {
-    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight'];
-    const isNumericKey = (event.key >= '0' && event.key <= '9');
-    const isAllowedKey = allowedKeys.includes(event.key);
-
-    if (!isNumericKey && !isAllowedKey) {
-      event.preventDefault();
-    }
-
-    currentKey.value = event.key;
-  }
-
   const handlerPriceInput = (event: Event) => {
     const targetValue = event.target as EventTargetValue;
-    digitValue.value = targetValue.value.replace(/[^0-9]/g, '');
-    const realDigitValue = parseFloat(digitValue.value) / 100;
-    priceInput.value = targetValue;
+    const inputContentLength = targetValue.value.length + 1;
 
+    digitValue.value = targetValue.value.replace(/[^0-9]/g, '');
+    const realDigitValue = digitValue.value && parseFloat(digitValue.value) / 100;
+    priceInput.value = targetValue;
+    
     prettyCurrency.value = realDigitValue.toLocaleString('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     });
-
-    if (currentKey.value !== 'Backspace') {
-      targetValue.value = prettyCurrency.value;
-    }
+    
+    targetValue.value = prettyCurrency.value.replace('R$', '');
+  
+    inputContentLength && targetValue.setSelectionRange(inputContentLength, inputContentLength);
+    targetValue.focus();
   }
 
   const handlerAddButton = async () => {
@@ -105,7 +97,7 @@
         </div>
         <div class="mb-3">
           <label for="menuPriceInput" class="form-label">Preço</label>
-          <input type="text" class="form-control" id="menuPriceInput" placeholder="R$ 0,00" @keydown="restrictNonNumericKeys" @input="handlerPriceInput">
+          <input type="text" class="form-control" id="menuPriceInput" placeholder="R$ 0,00" @input="handlerPriceInput">
           <span :hidden="isHiddenInputCurrency" class="alert-message">Insira um valor válido</span>
         </div>
 
