@@ -4,6 +4,7 @@
   import Navbar from '../components/NavbarComponent.vue';
   import { getMenu, type Menu } from '@/services/menuService';
   import { saveOrder, updateOrder, findOrder, type Order } from '../services/orderService';
+  import Message from '../components/MessageComponent.vue';
 
   interface EventTargetChecked extends EventTarget {
     checked: boolean;
@@ -22,6 +23,8 @@
   });
   let pageTitle = ref('Novo pedido');
   let addButtonContent = ref('Adicionar');
+  let showMessage = ref('');
+  let message = ref('Pedido adicionado com sucesso!')
 
   onMounted(async () => {
     menuData.value = await getMenu();
@@ -42,6 +45,7 @@
     if (orderId) {
       pageTitle.value = 'Editar pedido';
       addButtonContent.value = 'Salvar';
+      message.value = 'Pedido salvo com sucesso!';
 
       const orderData = await findOrder(orderId) as Order;
 
@@ -127,16 +131,20 @@
     }
   }
 
+  const onShowMessage = () => {
+    showMessage.value = 'show';
+  }
+
   const handlerAddButton = async () => {
     try {
       const orderId = route.params.id as string;
 
       if (orderId) {
         await updateOrder(orderId, order);
-        alert('Pedido salvo com sucesso!');
+        onShowMessage();
       } else {
         await saveOrder(order);
-        alert('Pedido adicionado com sucesso!');
+        onShowMessage();
         cleanOrder();
       }
 
@@ -154,6 +162,14 @@
   <main>
     <div class="container">
       <h1>{{ pageTitle }}</h1>
+
+      <div class="message-container">
+        <Message 
+        :message="message"
+        :show-message="showMessage"
+        color="success"
+         />
+      </div>
 
       <form action="" class="mt-4">
         <div class="mb-3">

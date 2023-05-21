@@ -2,13 +2,14 @@
   import { ref } from 'vue';
   import Navbar from '../components/NavbarComponent.vue';
   import { saveMenu } from '../services/menuService';
+  import Message from '../components/MessageComponent.vue';
 
   interface EventTargetValue extends EventTarget {
     value: string;
     setSelectionRange: (selectionStart: number, selectionEnd: number) => undefined;
     focus: () => undefined;
   }
-  
+
   let digitValue = ref('');
   let nameInputValue = ref('');
   let isHiddenInputName = ref(true);
@@ -16,6 +17,7 @@
   let prettyCurrency = ref('');
   let nameInput = ref();
   let priceInput = ref();
+  let showMessage = ref('');
 
   const handlerNameInput = (event: Event) => {
     const targetValue = event.target as EventTargetValue;
@@ -40,6 +42,10 @@
   
     inputContentLength && targetValue.setSelectionRange(inputContentLength, inputContentLength);
     targetValue.focus();
+  }
+
+  const onShowMessage = () => {
+    showMessage.value = 'show';
   }
 
   const handlerAddButton = async () => {
@@ -68,7 +74,7 @@
         price: parseFloat(digitValue.value) / 100
       });
 
-      alert('Cardápio salvo com sucesso!');
+      onShowMessage();
 
       nameInput.value.value = '';
       priceInput.value.value = '';
@@ -88,6 +94,14 @@
   <main>
     <div class="container">
       <h1>Novo cardápio</h1>
+
+      <div class="message-container">
+        <Message 
+        :message="'Cardápio salvo com sucesso!'"
+        :show-message="showMessage"
+        color="success"
+         />
+      </div>
 
       <form action="" class="mt-4">
         <div class="mb-3">
