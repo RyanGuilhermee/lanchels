@@ -2,8 +2,10 @@
   import { ref, onMounted } from 'vue';
   import Navbar from '../components/NavbarComponent.vue';
   import { deleteAllOrders, findAllOrders, type Order } from '../services/orderService';
-
+  import Message from '../components/MessageComponent.vue';
+  
   let orders = ref<Order[]>();
+  let showMessage = ref('');
 
    onMounted(async () => {
       try {
@@ -21,11 +23,13 @@
     }
 
     await deleteAllOrders();
-
     orders.value = [];
-
-    alert('Lista limpa com sucesso!');
+    onShowMessage();
    }
+
+   const onShowMessage = () => {
+    showMessage.value = 'show';
+  }
 </script>
 
 <template>
@@ -36,6 +40,14 @@
   <main>
     <div class="container">
       <h1>Pedidos em débito</h1>
+
+      <div class="message-container">
+        <Message 
+        :message="'Lista limpa com sucesso!'"
+        :show-message="showMessage"
+        color="success"
+         />
+      </div>
 
       <div class="clear-list d-flex justify-content-end">
         <button type="button" class="btn btn-outline-danger" @click="clearList">Limpar lista</button>
