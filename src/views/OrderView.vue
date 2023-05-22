@@ -12,6 +12,7 @@
 
   const route = useRoute();
   let isHiddenInputName = ref(true);
+  let isHiddenInputSnacks = ref(true);
   let menuData = ref<Menu[]>();
   let order = reactive<Order>({
     customerName: '',
@@ -139,6 +140,22 @@
     try {
       const orderId = route.params.id as string;
 
+      if (!order.customerName) {
+        isHiddenInputName.value = false;
+
+        return;
+      } 
+      
+      isHiddenInputName.value = true;
+      
+      if (!order.totalValue) {
+        isHiddenInputSnacks.value = false;
+
+        return;
+      }
+
+      isHiddenInputSnacks.value = true;
+
       if (orderId) {
         await updateOrder(orderId, order);
         onShowMessage();
@@ -263,6 +280,7 @@
             </div>
           </div>
         </div>
+        <span :hidden="isHiddenInputSnacks" class="alert-message">Adicione pelo menos 1 lanche</span>
 
         <div class="form-floating mt-3">
           <textarea class="form-control" placeholder="Observações" id="observationArea" style="height: 100px" v-model="order.observations"></textarea>
@@ -312,6 +330,11 @@
   main .amount-value-total {
     font-weight: 700;
     color: #414141;
+  }
+
+  main .alert-message {
+    font-size: 13px;
+    color: #e90c0c;
   }
 
   @media (min-width: 768px) {
