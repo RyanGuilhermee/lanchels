@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export type Menu = {
   id?: number;
   name: string;
@@ -5,31 +7,24 @@ export type Menu = {
   price: number;
 };
 
+const axiosInstance = axios.create({ baseURL: 'http://localhost:3000' });
+
 const saveMenu = async (menu: Menu) => {
-  try {
-    const data = await getMenu();
+  const response = await axiosInstance.post<Menu>('/api/menus', menu);
 
-    menu.id = data[data.length - 1].id! + 1;
-
-    data.push(menu);
-
-    localStorage.setItem('menu', JSON.stringify(data));
-
-    return Promise.resolve();
-  } catch (error) {
-    menu.id = 0;
-    localStorage.setItem('menu', JSON.stringify([menu]));
+  if (response.status !== 201) {
+    throw new Error('Ocorreu um erro :(');
   }
 };
 
-const getMenu = () => {
-  const menu = localStorage.getItem('menu');
+const getAllMenu = async () => {
+  const response = await axiosInstance.get<Menu[]>('/api/menus');
 
-  if (!menu) {
-    return Promise.reject(null);
+  if (response.status !== 200) {
+    throw new Error('Ocorreu um erro :(');
   }
 
-  return Promise.resolve(JSON.parse(menu as string) as Menu[]);
+  return response.data;
 };
 
-export { saveMenu, getMenu };
+export { saveMenu, getAllMenu };

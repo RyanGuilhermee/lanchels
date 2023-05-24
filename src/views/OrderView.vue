@@ -2,7 +2,7 @@
   import { ref, reactive, onMounted } from 'vue';
   import { useRoute } from 'vue-router';
   import Navbar from '../components/NavbarComponent.vue';
-  import { getMenu, type Menu } from '@/services/menuService';
+  import { getAllMenu, type Menu } from '@/services/menuService';
   import { saveOrder, updateOrder, findOrder, type Order } from '../services/orderService';
   import Message from '../components/MessageComponent.vue';
 
@@ -28,46 +28,50 @@
   let message = ref('Pedido adicionado com sucesso!')
 
   onMounted(async () => {
-    menuData.value = await getMenu();
-    const orderId = route.params.id as string;
-
-    for (let i = 0; i < menuData.value.length; i++) {
-      order.snacks[i] = {
-        id: i,
-        name: '',
-        price: 0,
-        quantity: 0,
-        quantityPaid: 0,
-        paymentMethod: 'pix',
-        isPaid: false,
-      }
-    }
-
-    if (orderId) {
-      pageTitle.value = 'Editar pedido';
-      addButtonContent.value = 'Salvar';
-      message.value = 'Pedido salvo com sucesso!';
-
-      const orderData = await findOrder(orderId) as Order;
-
-      order.customerName = orderData.customerName,
-      order.snacks = [],
-      order.totalValue = orderData.totalValue,
-      order.totalPaid = orderData.totalPaid,
-      order.totalDebt = orderData.totalDebt,
-      order.observations = orderData.observations
-
-      for (const i in orderData.snacks) {
+    try {
+      menuData.value = await getAllMenu();
+      const orderId = route.params.id as string;
+  
+      for (let i = 0; i < menuData.value.length; i++) {
         order.snacks[i] = {
-          id: Number(i),
-          name: orderData.snacks[i].name,
-          price: orderData.snacks[i].price,
-          quantity: orderData.snacks[i].quantity,
-          quantityPaid: orderData.snacks[i].quantityPaid,
-          paymentMethod: orderData.snacks[i].paymentMethod,
-          isPaid: orderData.snacks[i].isPaid,
+          id: i,
+          name: '',
+          price: 0,
+          quantity: 0,
+          quantityPaid: 0,
+          paymentMethod: 'pix',
+          isPaid: false,
         }
       }
+  
+      if (orderId) {
+        pageTitle.value = 'Editar pedido';
+        addButtonContent.value = 'Salvar';
+        message.value = 'Pedido salvo com sucesso!';
+  
+        const orderData = await findOrder(orderId) as Order;
+  
+        order.customerName = orderData.customerName,
+        order.snacks = [],
+        order.totalValue = orderData.totalValue,
+        order.totalPaid = orderData.totalPaid,
+        order.totalDebt = orderData.totalDebt,
+        order.observations = orderData.observations
+  
+        for (const i in orderData.snacks) {
+          order.snacks[i] = {
+            id: Number(i),
+            name: orderData.snacks[i].name,
+            price: orderData.snacks[i].price,
+            quantity: orderData.snacks[i].quantity,
+            quantityPaid: orderData.snacks[i].quantityPaid,
+            paymentMethod: orderData.snacks[i].paymentMethod,
+            isPaid: orderData.snacks[i].isPaid,
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
 
