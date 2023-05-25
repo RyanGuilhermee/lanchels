@@ -7,7 +7,7 @@ export type Menu = {
   price: number;
 };
 
-const axiosInstance = axios.create({ baseURL: 'http://52.67.173.17:3000' });
+const axiosInstance = axios.create({ baseURL: 'https://lanchels-backend.vercel.app' });
 
 const saveMenu = async (menu: Menu) => {
   const response = await axiosInstance.post<Menu>('/api/menus', menu);
