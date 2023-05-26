@@ -195,7 +195,7 @@ const handlerAddButton = async () => {
         <div class="mb-3">
           <label for="orderNameInput" class="form-label">Nome do cliente</label>
           <input
-            type="email"
+            type="text"
             class="form-control"
             id="orderNameInput"
             placeholder="José"

@@ -21,7 +21,6 @@ let prettyCurrency = ref('');
 let nameInput = ref();
 let priceInput = ref();
 let showMessage = ref('');
-let isDisabledInputName = ref(false);
 let menuId = ref('');
 let pageTitle = ref('Novo cardápio');
 let buttonContent = ref('Adicionar');
@@ -38,7 +37,6 @@ onMounted(async () => {
       nameInputValue.value = menu.name;
       digitValue.value = String(menu.price);
       prettyCurrency.value = menu.prettyPrice.replace('R$', '');
-      isDisabledInputName.value = true;
     } catch (error) {
       console.log(error);
     }
@@ -64,7 +62,7 @@ const handlerPriceInput = (event: Event) => {
     currency: 'BRL'
   });
 
-  targetValue.value = prettyCurrency.value.replace('R$', '');
+  prettyCurrency.value = prettyCurrency.value.replace('R$', '');
 
   inputContentLength && targetValue.setSelectionRange(inputContentLength, inputContentLength);
   targetValue.focus();
@@ -101,9 +99,10 @@ const handlerAddButton = async () => {
         price: parseFloat(digitValue.value) / 100
       });
 
+      onShowMessage();
+
       nameInput.value.value = '';
       priceInput.value.value = '';
-      nameInputValue.value = '';
       digitValue.value = '';
 
       return;
@@ -148,12 +147,11 @@ const handlerAddButton = async () => {
         <div class="mb-3">
           <label for="menuNameInput" class="form-label">Nome</label>
           <input
-            type="email"
+            type="text"
             class="form-control"
             id="menuNameInput"
             placeholder="Torta de frango"
             v-model="nameInputValue"
-            :disabled="isDisabledInputName"
             @input="handlerNameInput"
           />
           <span :hidden="isHiddenInputName" class="alert-message">Insira um valor válido</span>
