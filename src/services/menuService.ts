@@ -7,7 +7,6 @@ export type Menu = {
   price: number;
 };
 
-//comment
 const axiosInstance = axios.create({ baseURL: 'https://lanchels-backend.vercel.app' });
 
 const saveMenu = async (menu: Menu) => {
