@@ -7,10 +7,13 @@ import Message from '../components/MessageComponent.vue';
 let menus = ref<Menu[]>();
 let showMessage = ref('');
 let menuId = ref('');
+let showSpinner = ref(true);
 
 onMounted(async () => {
   try {
     menus.value = await getAllMenu();
+
+    showSpinner.value = false;
   } catch (error) {
     console.log(error);
   }
@@ -90,9 +93,17 @@ const onShowMessage = () => {
 
       <div class="paid-orders-list mt-4">
         <ul class="list-group list-group-flush">
-          <div class="d-flex justify-content-center" v-if="!menus?.length">
+          <div class="d-flex justify-content-center" v-if="!showSpinner && !menus?.length">
             <p style="margin-top: 200px; color: #5f5f5f">Sem cardápios</p>
           </div>
+          <template v-if="showSpinner">
+            <div class="text-center text-warning" style="margin-top: 200px;">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </template>
+
           <li
             class="list-group-item d-flex justify-content-between"
             v-for="(menu, index) in menus"

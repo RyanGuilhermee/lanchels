@@ -37,10 +37,13 @@ let addButtonContent = ref('Adicionar');
 let showMessage = ref('');
 let message = ref('Pedido adicionado com sucesso!');
 let prettyDonation = ref('');
+let showSpinner = ref(true);
 
 onMounted(async () => {
   try {
     menuData.value = await getAllMenu();
+
+    showSpinner.value = false;
     const orderId = route.params.id as string;
 
     for (let i = 0; i < menuData.value.length; i++) {
@@ -176,8 +179,6 @@ const handlerDonationInput = (event: Event) => {
 
   order.donation.totalDonation = pureValueFormatted || 0;
 
-  console.log(order.donation.totalDonation)
-
   prettyDonation.value = prettyDonation.value.replace('R$', '');
 
   inputContentLength && targetValue.setSelectionRange(inputContentLength, inputContentLength);
@@ -249,7 +250,19 @@ const handlerAddButton = async () => {
             <p class="card-title text-center">Lanches</p>
           </div>
           <div class="card-body" style="height: 300px; overflow-y: auto">
+            <div class="d-flex justify-content-center" v-if="!showSpinner && !menuData?.length">
+              <p style="margin-top: 100px; color: #5f5f5f">Sem lanches</p>
+            </div>
+
             <div class="accordion accordion-flush" id="accordionFlushExample">
+              <template v-if="showSpinner">
+                <div class="text-center text-warning" style="margin-top: 100px;">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </template>
+
               <div class="accordion-item" v-for="(menu, index) in menuData" :key="index">
                 <h2 class="accordion-header">
                   <button
