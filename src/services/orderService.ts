@@ -13,6 +13,10 @@ export type Order = {
   totalValue: number;
   totalPaid: number;
   totalDebt: number;
+  donation: {
+    totalDonation: number;
+    donationMethod: string;
+  };
   observations: string;
 };
 

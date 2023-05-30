@@ -10,6 +10,12 @@ interface EventTargetChecked extends EventTarget {
   checked: boolean;
 }
 
+interface EventTargetValue extends EventTarget {
+  value: string;
+  setSelectionRange: (selectionStart: number, selectionEnd: number) => undefined;
+  focus: () => undefined;
+}
+
 const route = useRoute();
 let isHiddenInputName = ref(true);
 let isHiddenInputSnacks = ref(true);
@@ -20,12 +26,17 @@ let order = reactive<Order>({
   totalValue: 0,
   totalPaid: 0,
   totalDebt: 0,
+  donation: {
+    totalDonation: 0,
+    donationMethod: 'pix'
+  },
   observations: ''
 });
 let pageTitle = ref('Novo pedido');
 let addButtonContent = ref('Adicionar');
 let showMessage = ref('');
 let message = ref('Pedido adicionado com sucesso!');
+let prettyDonation = ref('');
 
 onMounted(async () => {
   try {
@@ -56,6 +67,11 @@ onMounted(async () => {
         (order.totalValue = orderData.totalValue),
         (order.totalPaid = orderData.totalPaid),
         (order.totalDebt = orderData.totalDebt),
+        (prettyDonation.value = orderData.donation.totalDonation.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).replace('R$', '')),
+        (order.donation.donationMethod = orderData.donation.donationMethod),
         (order.observations = orderData.observations);
 
       for (const i in orderData.snacks) {
@@ -125,6 +141,8 @@ const cleanOrder = () => {
     (order.totalValue = 0),
     (order.totalPaid = 0),
     (order.totalDebt = 0),
+    (order.donation.totalDonation = 0),
+    (prettyDonation.value = ''),
     (order.observations = '');
 
   for (let i = 0; i < menuData.value!.length; i++) {
@@ -142,6 +160,28 @@ const cleanOrder = () => {
 
 const onShowMessage = () => {
   showMessage.value = 'show';
+};
+
+const handlerDonationInput = (event: Event) => {
+  const targetValue = event.target as EventTargetValue;
+  const inputContentLength = targetValue.value.length + 1;
+
+  const pureValue = targetValue.value.replace(/[^0-9]/g, '');
+  const pureValueFormatted = pureValue && parseFloat(pureValue) / 100;
+
+  prettyDonation.value = pureValueFormatted.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  });
+
+  order.donation.totalDonation = pureValueFormatted || 0;
+
+  console.log(order.donation.totalDonation)
+
+  prettyDonation.value = prettyDonation.value.replace('R$', '');
+
+  inputContentLength && targetValue.setSelectionRange(inputContentLength, inputContentLength);
+  targetValue.focus();
 };
 
 const handlerAddButton = async () => {
@@ -365,6 +405,50 @@ const handlerAddButton = async () => {
           >Adicione pelo menos 1 lanche</span
         >
 
+        <div class="card mt-3">
+          <div class="card-header">
+              <p class="card-title text-center">Doações</p>
+          </div>
+          <div class="card-body">
+            <div class="donation-container d-flex justify-content-around align-items-center">
+              <div class="donation-input">
+                <label for="orderNameInput" class="form-label">Doação total</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="donationInput"
+                  placeholder="R$ 0,00"
+                  v-model="prettyDonation"
+                  @input="handlerDonationInput"
+                />
+              </div>
+    
+              <div class="donation-check">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    id="radioPix"
+                    value="pix"
+                    v-model="order.donation.donationMethod"
+                  />
+                  <label class="form-check-label" for="radioPix">Pix</label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    id="radioMoney"
+                    value="money"
+                    v-model="order.donation.donationMethod"
+                  />
+                  <label class="form-check-label" for="radioMoney">Dinheiro</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="form-floating mt-3">
           <textarea
             class="form-control"

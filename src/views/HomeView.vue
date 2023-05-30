@@ -26,6 +26,10 @@ onMounted(async () => {
           totalAll.value += snack.quantityPaid * snack.price;
         }
       }
+
+      totalPix.value += order.donation.donationMethod === 'pix' ? order.donation.totalDonation : 0;
+      totalMoney.value += order.donation.donationMethod === 'money' ? order.donation.totalDonation : 0;
+      totalAll.value += order.donation.totalDonation;
     });
   } catch (error) {
     console.log(error);
