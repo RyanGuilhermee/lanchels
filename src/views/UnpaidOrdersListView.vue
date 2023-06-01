@@ -70,7 +70,7 @@ const onShowMessage = () => {
             </div>
 
             <router-link :to="`/order/${order.id}`">
-              <button type="button" class="btn btn-outline-light">
+              <button type="button" class="btn btn-outline-light" style="border: none; background: none;">
                 <span class="material-symbols-outlined" style="color: #5f5f5f">edit</span>
               </button>
             </router-link>

@@ -115,8 +115,8 @@ const onShowMessage = () => {
 
             <div class="actions d-flex align-items-center">
               <router-link :to="`/menu/${menu.id}`">
-                <button type="button" class="btn btn-outline-light">
-                  <span class="material-symbols-outlined" style="color: #5f5f5f">edit</span>
+                <button type="button" class="btn btn-outline-light" style="border: none; background: none;">
+                  <span class="material-symbols-outlined" style="color: #5f5f5f;">edit</span>
                 </button>
               </router-link>
 
@@ -124,7 +124,7 @@ const onShowMessage = () => {
                 class="delete-btn ms-3"
                 data-bs-toggle="modal"
                 data-bs-target="#modalDelete"
-                style="border: none"
+                style="border: none; background: none;"
                 @click="() => setMenuId(menu.id as string)"
               >
                 <span class="material-symbols-outlined" style="color: #e23737">delete</span>
