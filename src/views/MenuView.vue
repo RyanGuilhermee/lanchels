@@ -95,7 +95,7 @@ const handlerAddButton = async () => {
     if (menuId.value) {
       await updateMenu(menuId.value, {
         name: nameInputValue.value,
-        prettyPrice: parseFloat(prettyCurrency.value).toLocaleString('pt-BR', {
+        prettyPrice: Number(prettyCurrency.value.replace(',', '.')).toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL'
         }),
@@ -113,7 +113,7 @@ const handlerAddButton = async () => {
 
     await saveMenu({
       name: nameInputValue.value,
-      prettyPrice: parseFloat(prettyCurrency.value).toLocaleString('pt-BR', {
+      prettyPrice: Number(prettyCurrency.value.replace(',', '.')).toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL'
       }),
