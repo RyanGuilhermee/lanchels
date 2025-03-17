@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import Navbar from '../components/NavbarComponent.vue';
 import { findAllOrders } from '../services/orderService';
+import { generateReport } from '@/services/report-service';
 
 let totalPix = ref(0);
 let totalMoney = ref(0);
@@ -47,6 +48,28 @@ onMounted(async () => {
     console.log(error);
   }
 });
+
+const report = async  (e: Event) => {
+  e.preventDefault()
+  const ordersData = await findAllOrders()
+
+ const url = await generateReport({
+  orders: ordersData,
+  calculatedData: {
+    totalPixSales: totalPixAll.value,
+    totalMoneySales: totalMoneyAll.value,
+    totalSales: totalAllAll.value,
+    totalPixDonation: totalPixDonation.value,
+    totalMoneyDonation: totalMoneyDonation.value,
+    totalDonation: totalAllDonation.value,
+    totalPix: totalPixAll.value,
+    totalMoney: totalMoneyAll.value,
+    total: totalAllAll.value
+  }
+ })
+
+ window.open(url, 'blank') 
+}
 </script>
 
 <template>
@@ -222,6 +245,11 @@ onMounted(async () => {
               Novo cardápio
             </button>
           </router-link>
+          <a @click="report">
+            <button type="button" class="btn btn-warning shadow p-3 mb-4 bg-body-tertiary rounded">
+              Relatório de vendas
+            </button>
+          </a>
         </div>
       </section>
     </div>

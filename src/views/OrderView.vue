@@ -46,9 +46,9 @@ onMounted(async () => {
     showSpinner.value = false;
     const orderId = route.params.id as string;
 
-    for (let i = 0; i < menuData.value.length; i++) {
+    for (const i in menuData.value) {
       order.snacks[i] = {
-        id: i,
+        id: Number(i),
         name: '',
         price: 0,
         quantity: 0,
@@ -66,7 +66,6 @@ onMounted(async () => {
       const orderData = (await findOrder(orderId)) as Order;
 
       (order.customerName = orderData.customerName),
-        (order.snacks = []),
         (order.totalValue = orderData.totalValue),
         (order.totalPaid = orderData.totalPaid),
         (order.totalDebt = orderData.totalDebt),

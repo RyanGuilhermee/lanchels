@@ -17,7 +17,7 @@ export type Order = {
     totalDonation: number;
     donationMethod: string;
   };
-  observations: string;
+  observations?: string;
 };
 
 const saveOrder = async (order: Order) => {
