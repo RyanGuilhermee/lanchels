@@ -26,7 +26,6 @@ const baseURL = 'http://localhost:3000';
 const axiosInstance = axios.create({ baseURL });
 
 export const generateReport = async (reportData: ReportRequest) => {
-  console.log(reportData);
   const response = await axiosInstance.post<ReportResponse>(
     '/api/data/generates-sales-summary-pdf',
     reportData
