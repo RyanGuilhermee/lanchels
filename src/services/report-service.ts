@@ -21,8 +21,8 @@ export type ReportResponse = {
   url: string;
 };
 
-const baseURL = 'https://lanchels-backend.vercel.app';
-// const baseURL = 'http://localhost:3000';
+// const baseURL = 'https://lanchels-backend.vercel.app';
+const baseURL = 'http://localhost:3000';
 
 const axiosInstance = axios.create({ baseURL });
 
@@ -36,5 +36,5 @@ export const generateReport = async (reportData: ReportRequest) => {
     throw new Error('Ocorreu um erro :(');
   }
 
-  return `${baseURL}/${response.data.url}`;
+  return response.data.url;
 };
