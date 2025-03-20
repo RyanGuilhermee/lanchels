@@ -36,8 +36,10 @@ onMounted(async () => {
         }
       }
 
-      totalPixDonation.value += order.donation.donationMethod === 'pix' ? order.donation.totalDonation : 0;
-      totalMoneyDonation.value += order.donation.donationMethod === 'money' ? order.donation.totalDonation : 0;
+      totalPixDonation.value +=
+        order.donation.donationMethod === 'pix' ? order.donation.totalDonation : 0;
+      totalMoneyDonation.value +=
+        order.donation.donationMethod === 'money' ? order.donation.totalDonation : 0;
       totalAllDonation.value += order.donation.totalDonation;
     });
 
@@ -49,27 +51,28 @@ onMounted(async () => {
   }
 });
 
-const report = async  (e: Event) => {
-  e.preventDefault()
-  const ordersData = await findAllOrders()
+const report = async (e: Event) => {
+  e.preventDefault();
+  const ordersData = await findAllOrders();
 
- const url = await generateReport({
-  orders: ordersData,
-  calculatedData: {
-    totalPixSales: totalPixAll.value,
-    totalMoneySales: totalMoneyAll.value,
-    totalSales: totalAllAll.value,
-    totalPixDonation: totalPixDonation.value,
-    totalMoneyDonation: totalMoneyDonation.value,
-    totalDonation: totalAllDonation.value,
-    totalPix: totalPixAll.value,
-    totalMoney: totalMoneyAll.value,
-    total: totalAllAll.value
-  }
- })
+  const url = await generateReport({
+    orders: ordersData,
+    calculatedData: {
+      totalPixSales: totalPixAll.value,
+      totalMoneySales: totalMoneyAll.value,
+      totalSales: totalAllAll.value,
+      totalPixDonation: totalPixDonation.value,
+      totalMoneyDonation: totalMoneyDonation.value,
+      totalDonation: totalAllDonation.value,
+      totalPix: totalPixAll.value,
+      totalMoney: totalMoneyAll.value,
+      total: totalAllAll.value
+    }
+  });
 
- window.open(url, 'blank') 
-}
+  // window.open(url, '_blank');
+  window.open(new URL(url).href, '_blank');
+};
 </script>
 
 <template>
@@ -83,53 +86,55 @@ const report = async  (e: Event) => {
 
       <div class="cards-container">
         <section id="incommings">
-        <h2>Entradas de vendas:</h2>
+          <h2>Entradas de vendas:</h2>
 
-        <div class="cards d-flex justify-content-center">
-          <div class="row">
-            <div class="col">
-              <div
-                class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded"
-                style="width: 18rem"
-              >
-                <div class="card-body">
-                  <h5 class="card-title">Pix</h5>
-                  <p class="card-text">
-                    {{ totalPix.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
-                  </p>
+          <div class="cards d-flex justify-content-center">
+            <div class="row">
+              <div class="col">
+                <div
+                  class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded"
+                  style="width: 18rem"
+                >
+                  <div class="card-body">
+                    <h5 class="card-title">Pix</h5>
+                    <p class="card-text">
+                      {{ totalPix.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="col">
-              <div
-                class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded"
-                style="width: 18rem"
-              >
-                <div class="card-body">
-                  <h5 class="card-title">Dinheiro</h5>
-                  <p class="card-text">
-                    {{ totalMoney.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
-                  </p>
+              <div class="col">
+                <div
+                  class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded"
+                  style="width: 18rem"
+                >
+                  <div class="card-body">
+                    <h5 class="card-title">Dinheiro</h5>
+                    <p class="card-text">
+                      {{
+                        totalMoney.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                      }}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="col">
-              <div
-                class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded"
-                style="width: 18rem"
-              >
-                <div class="card-body">
-                  <h5 class="card-title">Total</h5>
-                  <p class="card-text">
-                    {{ totalAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
-                  </p>
+              <div class="col">
+                <div
+                  class="card text-center mb-3 shadow p-3 mb-1 bg-body-tertiary rounded"
+                  style="width: 18rem"
+                >
+                  <div class="card-body">
+                    <h5 class="card-title">Total</h5>
+                    <p class="card-text">
+                      {{ totalAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
         </section>
 
         <section id="donations-incommings">
@@ -145,7 +150,12 @@ const report = async  (e: Event) => {
                   <div class="card-body">
                     <h5 class="card-title">Pix</h5>
                     <p class="card-text">
-                      {{ totalPixDonation.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                      {{
+                        totalPixDonation.toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL'
+                        })
+                      }}
                     </p>
                   </div>
                 </div>
@@ -159,7 +169,12 @@ const report = async  (e: Event) => {
                   <div class="card-body">
                     <h5 class="card-title">Dinheiro</h5>
                     <p class="card-text">
-                      {{ totalMoneyDonation.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                      {{
+                        totalMoneyDonation.toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL'
+                        })
+                      }}
                     </p>
                   </div>
                 </div>
@@ -173,7 +188,12 @@ const report = async  (e: Event) => {
                   <div class="card-body">
                     <h5 class="card-title">Total</h5>
                     <p class="card-text">
-                      {{ totalAllDonation.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                      {{
+                        totalAllDonation.toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL'
+                        })
+                      }}
                     </p>
                   </div>
                 </div>
@@ -195,7 +215,9 @@ const report = async  (e: Event) => {
                   <div class="card-body">
                     <h5 class="card-title">Pix</h5>
                     <p class="card-text">
-                      {{ totalPixAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                      {{
+                        totalPixAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                      }}
                     </p>
                   </div>
                 </div>
@@ -209,7 +231,12 @@ const report = async  (e: Event) => {
                   <div class="card-body">
                     <h5 class="card-title">Dinheiro</h5>
                     <p class="card-text">
-                      {{ totalMoneyAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                      {{
+                        totalMoneyAll.toLocaleString('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL'
+                        })
+                      }}
                     </p>
                   </div>
                 </div>
@@ -223,7 +250,9 @@ const report = async  (e: Event) => {
                   <div class="card-body">
                     <h5 class="card-title">Total</h5>
                     <p class="card-text">
-                      {{ totalAllAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+                      {{
+                        totalAllAll.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                      }}
                     </p>
                   </div>
                 </div>
@@ -271,7 +300,7 @@ main h1 span {
   font-size: 30px;
 }
 
-main  h2 {
+main h2 {
   font-size: 11px;
   text-align: center;
   margin: 40px;

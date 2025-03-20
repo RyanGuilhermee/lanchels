@@ -36,7 +36,5 @@ export const generateReport = async (reportData: ReportRequest) => {
     throw new Error('Ocorreu um erro :(');
   }
 
-  console.log(response.data.url);
-
   return response.data.url;
 };
