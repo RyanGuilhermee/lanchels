@@ -16,6 +16,8 @@ let totalPixAll = ref(0);
 let totalMoneyAll = ref(0);
 let totalAllAll = ref(0);
 
+let showSpinner = ref(false);
+
 onMounted(async () => {
   try {
     const ordersData = await findAllOrders();
@@ -52,6 +54,7 @@ onMounted(async () => {
 });
 
 const report = async (e: Event) => {
+  showSpinner.value = true;
   e.preventDefault();
   const ordersData = await findAllOrders();
 
@@ -70,8 +73,8 @@ const report = async (e: Event) => {
     }
   });
 
-  // window.open(url, '_blank');
   window.open(new URL(url).href, '_blank');
+  showSpinner.value = false;
 };
 </script>
 
@@ -275,9 +278,27 @@ const report = async (e: Event) => {
             </button>
           </router-link>
           <a @click="report">
-            <button type="button" class="btn btn-warning shadow p-3 mb-4 bg-body-tertiary rounded">
-              Relatório de vendas
-            </button>
+            <template v-if="showSpinner">
+              <button
+                type="button"
+                class="btn btn-warning shadow p-3 mb-4 bg-body-tertiary rounded"
+                style="width: 173px; height: 55px"
+              >
+                <div class="text-center text-dark">
+                  <div class="spinner-border" role="status" style="width: 20px; height: 20px">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </button>
+            </template>
+            <template v-else>
+              <button
+                type="button"
+                class="btn btn-warning shadow p-3 mb-4 bg-body-tertiary rounded"
+              >
+                Relatório de vendas
+              </button>
+            </template>
           </a>
         </div>
       </section>
